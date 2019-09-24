@@ -63,36 +63,16 @@ class Adafruit_GFX : public Print {
       int16_t x2, int16_t y2, uint16_t color),
     drawRoundRect(int16_t x0, int16_t y0, int16_t w, int16_t h,
       int16_t radius, uint16_t color),
+	drawRoundRect(int16_t x0, int16_t y0, int16_t w, int16_t h,
+		  int16_t radius, uint16_t color, uint8_t thickness),
     fillRoundRect(int16_t x0, int16_t y0, int16_t w, int16_t h,
       int16_t radius, uint16_t color),
-    drawBitmap(int16_t x, int16_t y, const uint8_t bitmap[],
-      int16_t w, int16_t h, uint16_t color),
-    drawBitmap(int16_t x, int16_t y, const uint8_t bitmap[],
-      int16_t w, int16_t h, uint16_t color, uint16_t bg),
-    drawBitmap(int16_t x, int16_t y, uint8_t *bitmap,
-      int16_t w, int16_t h, uint16_t color),
-    drawBitmap(int16_t x, int16_t y, uint8_t *bitmap,
-      int16_t w, int16_t h, uint16_t color, uint16_t bg),
-    drawXBitmap(int16_t x, int16_t y, const uint8_t bitmap[],
-      int16_t w, int16_t h, uint16_t color),
-    drawGrayscaleBitmap(int16_t x, int16_t y, const uint8_t bitmap[],
-      int16_t w, int16_t h),
-    drawGrayscaleBitmap(int16_t x, int16_t y, uint8_t *bitmap,
-      int16_t w, int16_t h),
-    drawGrayscaleBitmap(int16_t x, int16_t y,
-      const uint8_t bitmap[], const uint8_t mask[],
-      int16_t w, int16_t h),
-    drawGrayscaleBitmap(int16_t x, int16_t y,
-      uint8_t *bitmap, uint8_t *mask, int16_t w, int16_t h),
-    drawRGBBitmap(int16_t x, int16_t y, const uint16_t bitmap[],
-      int16_t w, int16_t h),
-    drawRGBBitmap(int16_t x, int16_t y, uint16_t *bitmap,
-      int16_t w, int16_t h),
+    drawRGBBitmap(int16_t x, int16_t y, const uint16_t bitmap[]),
+    drawRGBBitmap(int16_t x, int16_t y, uint16_t *bitmap),
     drawRGBBitmap(int16_t x, int16_t y,
-      const uint16_t bitmap[], const uint8_t mask[],
-      int16_t w, int16_t h),
+      const uint16_t bitmap[], const uint8_t mask[]),
     drawRGBBitmap(int16_t x, int16_t y,
-      uint16_t *bitmap, uint8_t *mask, int16_t w, int16_t h),
+      uint16_t *bitmap, uint8_t *mask),
     drawChar(int16_t x, int16_t y, unsigned char c, uint16_t color,
       uint16_t bg, uint8_t size),
     drawChar(int16_t x, int16_t y, unsigned char c, uint16_t color,
@@ -235,60 +215,6 @@ class Adafruit_GFX : public Print {
     _cp437;         ///< If set, use correct CP437 charset (default is off)
   GFXfont
     *gfxFont;       ///< Pointer to special font
-};
-
-
-/// A simple drawn button UI element
-class Adafruit_GFX_Button {
-
- public:
-  Adafruit_GFX_Button(void);
-  // "Classic" initButton() uses center & size
-  void initButton(Adafruit_GFX *gfx, int16_t x, int16_t y,
-   uint16_t w, uint16_t h, uint16_t outline, uint16_t fill,
-   uint16_t textcolor, char *label, uint8_t textsize);
-  void initButton(Adafruit_GFX *gfx, int16_t x, int16_t y,
-   uint16_t w, uint16_t h, uint16_t outline, uint16_t fill,
-   uint16_t textcolor, char *label, uint8_t textsize_x, uint8_t textsize_y);
-  // New/alt initButton() uses upper-left corner & size
-  void initButtonUL(Adafruit_GFX *gfx, int16_t x1, int16_t y1,
-   uint16_t w, uint16_t h, uint16_t outline, uint16_t fill,
-   uint16_t textcolor, char *label, uint8_t textsize);
-  void initButtonUL(Adafruit_GFX *gfx, int16_t x1, int16_t y1,
-   uint16_t w, uint16_t h, uint16_t outline, uint16_t fill,
-   uint16_t textcolor, char *label, uint8_t textsize_x, uint8_t textsize_y);
-  void drawButton(boolean inverted = false);
-  boolean contains(int16_t x, int16_t y);
-
-  /**********************************************************************/
-  /*!
-    @brief    Sets button state, should be done by some touch function
-    @param    p  True for pressed, false for not.
-  */
-  /**********************************************************************/
-  void press(boolean p) { laststate = currstate; currstate = p; }
-
-  boolean justPressed();
-  boolean justReleased();
-
-  /**********************************************************************/
-  /*!
-    @brief    Query whether the button is currently pressed
-    @returns  True if pressed
-  */
-  /**********************************************************************/
-  boolean isPressed(void) { return currstate; };
-
- private:
-  Adafruit_GFX *_gfx;
-  int16_t       _x1, _y1; // Coordinates of top-left corner
-  uint16_t      _w, _h;
-  uint8_t       _textsize_x;
-  uint8_t       _textsize_y;
-  uint16_t      _outlinecolor, _fillcolor, _textcolor;
-  char          _label[10];
-
-  boolean currstate, laststate;
 };
 
 

@@ -544,6 +544,28 @@ void Adafruit_GFX::drawRoundRect(int16_t x, int16_t y, int16_t w,
 
 /**************************************************************************/
 /*!
+@brief   Draw a rounded rectangle with no fill color
+@param    x   Top left corner x coordinate
+@param    y   Top left corner y coordinate
+@param    w   Width in pixels
+@param    h   Height in pixels
+@param    r   Radius of corner rounding
+@param    color 16-bit 5-6-5 Color to draw with
+@param    thickness border line thickness 
+*/
+/**************************************************************************/
+void Adafruit_GFX::drawRoundRect(int16_t x0, int16_t y0, int16_t w, int16_t h,
+	int16_t radius, uint16_t color, uint8_t thickness)
+{
+	uint8_t cnt;
+	for (cnt = 0; cnt < thickness; cnt++)
+	{
+		drawRoundRect(x0 + cnt, y0 + cnt, w - (cnt * 2), h - (cnt * 2), radius, color);
+	}
+}
+
+/**************************************************************************/
+/*!
    @brief   Draw a rounded rectangle with fill color
     @param    x   Top left corner x coordinate
     @param    y   Top left corner y coordinate
@@ -677,267 +699,7 @@ void Adafruit_GFX::fillTriangle(int16_t x0, int16_t y0,
     endWrite();
 }
 
-// BITMAP / XBITMAP / GRAYSCALE / RGB BITMAP FUNCTIONS ---------------------
-
-/**************************************************************************/
-/*!
-   @brief      Draw a PROGMEM-resident 1-bit image at the specified (x,y) position, using the specified foreground color (unset bits are transparent).
-    @param    x   Top left corner x coordinate
-    @param    y   Top left corner y coordinate
-    @param    bitmap  byte array with monochrome bitmap
-    @param    w   Width of bitmap in pixels
-    @param    h   Height of bitmap in pixels
-    @param    color 16-bit 5-6-5 Color to draw with
-*/
-/**************************************************************************/
-void Adafruit_GFX::drawBitmap(int16_t x, int16_t y,
-  const uint8_t bitmap[], int16_t w, int16_t h, uint16_t color) {
-
-    int16_t byteWidth = (w + 7) / 8; // Bitmap scanline pad = whole byte
-    uint8_t byte = 0;
-
-    startWrite();
-    for(int16_t j=0; j<h; j++, y++) {
-        for(int16_t i=0; i<w; i++) {
-            if(i & 7) byte <<= 1;
-            else      byte   = pgm_read_byte(&bitmap[j * byteWidth + i / 8]);
-            if(byte & 0x80) writePixel(x+i, y, color);
-        }
-    }
-    endWrite();
-}
-
-/**************************************************************************/
-/*!
-   @brief      Draw a PROGMEM-resident 1-bit image at the specified (x,y) position, using the specified foreground (for set bits) and background (unset bits) colors.
-    @param    x   Top left corner x coordinate
-    @param    y   Top left corner y coordinate
-    @param    bitmap  byte array with monochrome bitmap
-    @param    w   Width of bitmap in pixels
-    @param    h   Height of bitmap in pixels
-    @param    color 16-bit 5-6-5 Color to draw pixels with
-    @param    bg 16-bit 5-6-5 Color to draw background with
-*/
-/**************************************************************************/
-void Adafruit_GFX::drawBitmap(int16_t x, int16_t y,
-  const uint8_t bitmap[], int16_t w, int16_t h,
-  uint16_t color, uint16_t bg) {
-
-    int16_t byteWidth = (w + 7) / 8; // Bitmap scanline pad = whole byte
-    uint8_t byte = 0;
-
-    startWrite();
-    for(int16_t j=0; j<h; j++, y++) {
-        for(int16_t i=0; i<w; i++ ) {
-            if(i & 7) byte <<= 1;
-            else      byte   = pgm_read_byte(&bitmap[j * byteWidth + i / 8]);
-            writePixel(x+i, y, (byte & 0x80) ? color : bg);
-        }
-    }
-    endWrite();
-}
-
-/**************************************************************************/
-/*!
-   @brief      Draw a RAM-resident 1-bit image at the specified (x,y) position, using the specified foreground color (unset bits are transparent).
-    @param    x   Top left corner x coordinate
-    @param    y   Top left corner y coordinate
-    @param    bitmap  byte array with monochrome bitmap
-    @param    w   Width of bitmap in pixels
-    @param    h   Height of bitmap in pixels
-    @param    color 16-bit 5-6-5 Color to draw with
-*/
-/**************************************************************************/
-void Adafruit_GFX::drawBitmap(int16_t x, int16_t y,
-  uint8_t *bitmap, int16_t w, int16_t h, uint16_t color) {
-
-    int16_t byteWidth = (w + 7) / 8; // Bitmap scanline pad = whole byte
-    uint8_t byte = 0;
-
-    startWrite();
-    for(int16_t j=0; j<h; j++, y++) {
-        for(int16_t i=0; i<w; i++ ) {
-            if(i & 7) byte <<= 1;
-            else      byte   = bitmap[j * byteWidth + i / 8];
-            if(byte & 0x80) writePixel(x+i, y, color);
-        }
-    }
-    endWrite();
-}
-
-/**************************************************************************/
-/*!
-   @brief      Draw a RAM-resident 1-bit image at the specified (x,y) position, using the specified foreground (for set bits) and background (unset bits) colors.
-    @param    x   Top left corner x coordinate
-    @param    y   Top left corner y coordinate
-    @param    bitmap  byte array with monochrome bitmap
-    @param    w   Width of bitmap in pixels
-    @param    h   Height of bitmap in pixels
-    @param    color 16-bit 5-6-5 Color to draw pixels with
-    @param    bg 16-bit 5-6-5 Color to draw background with
-*/
-/**************************************************************************/
-void Adafruit_GFX::drawBitmap(int16_t x, int16_t y,
-  uint8_t *bitmap, int16_t w, int16_t h, uint16_t color, uint16_t bg) {
-
-    int16_t byteWidth = (w + 7) / 8; // Bitmap scanline pad = whole byte
-    uint8_t byte = 0;
-
-    startWrite();
-    for(int16_t j=0; j<h; j++, y++) {
-        for(int16_t i=0; i<w; i++ ) {
-            if(i & 7) byte <<= 1;
-            else      byte   = bitmap[j * byteWidth + i / 8];
-            writePixel(x+i, y, (byte & 0x80) ? color : bg);
-        }
-    }
-    endWrite();
-}
-
-/**************************************************************************/
-/*!
-   @brief      Draw PROGMEM-resident XBitMap Files (*.xbm), exported from GIMP.
-   Usage: Export from GIMP to *.xbm, rename *.xbm to *.c and open in editor.
-   C Array can be directly used with this function.
-   There is no RAM-resident version of this function; if generating bitmaps
-   in RAM, use the format defined by drawBitmap() and call that instead.
-    @param    x   Top left corner x coordinate
-    @param    y   Top left corner y coordinate
-    @param    bitmap  byte array with monochrome bitmap
-    @param    w   Width of bitmap in pixels
-    @param    h   Height of bitmap in pixels
-    @param    color 16-bit 5-6-5 Color to draw pixels with
-*/
-/**************************************************************************/
-void Adafruit_GFX::drawXBitmap(int16_t x, int16_t y,
-  const uint8_t bitmap[], int16_t w, int16_t h, uint16_t color) {
-
-    int16_t byteWidth = (w + 7) / 8; // Bitmap scanline pad = whole byte
-    uint8_t byte = 0;
-
-    startWrite();
-    for(int16_t j=0; j<h; j++, y++) {
-        for(int16_t i=0; i<w; i++ ) {
-            if(i & 7) byte >>= 1;
-            else      byte   = pgm_read_byte(&bitmap[j * byteWidth + i / 8]);
-            // Nearly identical to drawBitmap(), only the bit order
-            // is reversed here (left-to-right = LSB to MSB):
-            if(byte & 0x01) writePixel(x+i, y, color);
-        }
-    }
-    endWrite();
-}
-
-
-/**************************************************************************/
-/*!
-   @brief   Draw a PROGMEM-resident 8-bit image (grayscale) at the specified (x,y) pos.
-   Specifically for 8-bit display devices such as IS31FL3731; no color reduction/expansion is performed.
-    @param    x   Top left corner x coordinate
-    @param    y   Top left corner y coordinate
-    @param    bitmap  byte array with grayscale bitmap
-    @param    w   Width of bitmap in pixels
-    @param    h   Height of bitmap in pixels
-*/
-/**************************************************************************/
-void Adafruit_GFX::drawGrayscaleBitmap(int16_t x, int16_t y,
-  const uint8_t bitmap[], int16_t w, int16_t h) {
-    startWrite();
-    for(int16_t j=0; j<h; j++, y++) {
-        for(int16_t i=0; i<w; i++ ) {
-            writePixel(x+i, y, (uint8_t)pgm_read_byte(&bitmap[j * w + i]));
-        }
-    }
-    endWrite();
-}
-
-/**************************************************************************/
-/*!
-   @brief   Draw a RAM-resident 8-bit image (grayscale) at the specified (x,y) pos.
-   Specifically for 8-bit display devices such as IS31FL3731; no color reduction/expansion is performed.
-    @param    x   Top left corner x coordinate
-    @param    y   Top left corner y coordinate
-    @param    bitmap  byte array with grayscale bitmap
-    @param    w   Width of bitmap in pixels
-    @param    h   Height of bitmap in pixels
-*/
-/**************************************************************************/
-void Adafruit_GFX::drawGrayscaleBitmap(int16_t x, int16_t y,
-  uint8_t *bitmap, int16_t w, int16_t h) {
-    startWrite();
-    for(int16_t j=0; j<h; j++, y++) {
-        for(int16_t i=0; i<w; i++ ) {
-            writePixel(x+i, y, bitmap[j * w + i]);
-        }
-    }
-    endWrite();
-}
-
-
-/**************************************************************************/
-/*!
-   @brief   Draw a PROGMEM-resident 8-bit image (grayscale) with a 1-bit mask
-   (set bits = opaque, unset bits = clear) at the specified (x,y) position.
-   BOTH buffers (grayscale and mask) must be PROGMEM-resident.
-   Specifically for 8-bit display devices such as IS31FL3731; no color reduction/expansion is performed.
-    @param    x   Top left corner x coordinate
-    @param    y   Top left corner y coordinate
-    @param    bitmap  byte array with grayscale bitmap
-    @param    mask  byte array with mask bitmap
-    @param    w   Width of bitmap in pixels
-    @param    h   Height of bitmap in pixels
-*/
-/**************************************************************************/
-void Adafruit_GFX::drawGrayscaleBitmap(int16_t x, int16_t y,
-  const uint8_t bitmap[], const uint8_t mask[],
-  int16_t w, int16_t h) {
-    int16_t bw   = (w + 7) / 8; // Bitmask scanline pad = whole byte
-    uint8_t byte = 0;
-    startWrite();
-    for(int16_t j=0; j<h; j++, y++) {
-        for(int16_t i=0; i<w; i++ ) {
-            if(i & 7) byte <<= 1;
-            else      byte   = pgm_read_byte(&mask[j * bw + i / 8]);
-            if(byte & 0x80) {
-                writePixel(x+i, y, (uint8_t)pgm_read_byte(&bitmap[j * w + i]));
-            }
-        }
-    }
-    endWrite();
-}
-
-/**************************************************************************/
-/*!
-   @brief   Draw a RAM-resident 8-bit image (grayscale) with a 1-bit mask
-   (set bits = opaque, unset bits = clear) at the specified (x,y) position.
-   BOTH buffers (grayscale and mask) must be RAM-residentt, no mix-and-match
-   Specifically for 8-bit display devices such as IS31FL3731; no color reduction/expansion is performed.
-    @param    x   Top left corner x coordinate
-    @param    y   Top left corner y coordinate
-    @param    bitmap  byte array with grayscale bitmap
-    @param    mask  byte array with mask bitmap
-    @param    w   Width of bitmap in pixels
-    @param    h   Height of bitmap in pixels
-*/
-/**************************************************************************/
-void Adafruit_GFX::drawGrayscaleBitmap(int16_t x, int16_t y,
-  uint8_t *bitmap, uint8_t *mask, int16_t w, int16_t h) {
-    int16_t bw   = (w + 7) / 8; // Bitmask scanline pad = whole byte
-    uint8_t byte = 0;
-    startWrite();
-    for(int16_t j=0; j<h; j++, y++) {
-        for(int16_t i=0; i<w; i++ ) {
-            if(i & 7) byte <<= 1;
-            else      byte   = mask[j * bw + i / 8];
-            if(byte & 0x80) {
-                writePixel(x+i, y, bitmap[j * w + i]);
-            }
-        }
-    }
-    endWrite();
-}
-
-
+// RGB BITMAP FUNCTIONS ---------------------
 /**************************************************************************/
 /*!
    @brief   Draw a PROGMEM-resident 16-bit image (RGB 5/6/5) at the specified (x,y) position.
@@ -945,16 +707,14 @@ void Adafruit_GFX::drawGrayscaleBitmap(int16_t x, int16_t y,
     @param    x   Top left corner x coordinate
     @param    y   Top left corner y coordinate
     @param    bitmap  byte array with 16-bit color bitmap
-    @param    w   Width of bitmap in pixels
-    @param    h   Height of bitmap in pixels
 */
 /**************************************************************************/
 void Adafruit_GFX::drawRGBBitmap(int16_t x, int16_t y,
-  const uint16_t bitmap[], int16_t w, int16_t h) {
+  const uint16_t bitmap[]) {
     startWrite();
-    for(int16_t j=0; j<h; j++, y++) {
-        for(int16_t i=0; i<w; i++ ) {
-            writePixel(x+i, y, pgm_read_word(&bitmap[j * w + i]));
+    for(int16_t j=0; j<bitmap[1]; j++, y++) {
+        for(int16_t i=0; i<bitmap[0]; i++ ) {
+            writePixel(x+i, y, pgm_read_word(&bitmap[j * bitmap[0] + i + 2]));
         }
     }
     endWrite();
@@ -967,16 +727,14 @@ void Adafruit_GFX::drawRGBBitmap(int16_t x, int16_t y,
     @param    x   Top left corner x coordinate
     @param    y   Top left corner y coordinate
     @param    bitmap  byte array with 16-bit color bitmap
-    @param    w   Width of bitmap in pixels
-    @param    h   Height of bitmap in pixels
 */
 /**************************************************************************/
 void Adafruit_GFX::drawRGBBitmap(int16_t x, int16_t y,
-  uint16_t *bitmap, int16_t w, int16_t h) {
+  uint16_t *bitmap) {
     startWrite();
-    for(int16_t j=0; j<h; j++, y++) {
-        for(int16_t i=0; i<w; i++ ) {
-            writePixel(x+i, y, bitmap[j * w + i]);
+    for(int16_t j=0; j<bitmap[1]; j++, y++) {
+        for(int16_t i=0; i<bitmap[0]; i++ ) {
+            writePixel(x+i, y, bitmap[j * bitmap[0] + i + 2]);
         }
     }
     endWrite();
@@ -990,22 +748,20 @@ void Adafruit_GFX::drawRGBBitmap(int16_t x, int16_t y,
     @param    y   Top left corner y coordinate
     @param    bitmap  byte array with 16-bit color bitmap
     @param    mask  byte array with monochrome mask bitmap
-    @param    w   Width of bitmap in pixels
-    @param    h   Height of bitmap in pixels
 */
 /**************************************************************************/
 void Adafruit_GFX::drawRGBBitmap(int16_t x, int16_t y,
-  const uint16_t bitmap[], const uint8_t mask[],
-  int16_t w, int16_t h) {
-    int16_t bw   = (w + 7) / 8; // Bitmask scanline pad = whole byte
+  const uint16_t bitmap[], const uint8_t mask[]) 
+{
+    int16_t bw   = (bitmap[0] + 7) / 8; // Bitmask scanline pad = whole byte
     uint8_t byte = 0;
     startWrite();
-    for(int16_t j=0; j<h; j++, y++) {
-        for(int16_t i=0; i<w; i++ ) {
+    for(int16_t j=0; j<bitmap[1]; j++, y++) {
+		for (int16_t i = 0; i < bitmap[0]; i++) {
             if(i & 7) byte <<= 1;
-            else      byte   = pgm_read_byte(&mask[j * bw + i / 8]);
+            else      byte   = pgm_read_byte(&mask[j * bw + i / 8 + 2]);
             if(byte & 0x80) {
-                writePixel(x+i, y, pgm_read_word(&bitmap[j * w + i]));
+                writePixel(x+i, y, pgm_read_word(&bitmap[j * bitmap[0] + i + 2]));
             }
         }
     }
@@ -1019,21 +775,19 @@ void Adafruit_GFX::drawRGBBitmap(int16_t x, int16_t y,
     @param    y   Top left corner y coordinate
     @param    bitmap  byte array with 16-bit color bitmap
     @param    mask  byte array with monochrome mask bitmap
-    @param    w   Width of bitmap in pixels
-    @param    h   Height of bitmap in pixels
 */
 /**************************************************************************/
 void Adafruit_GFX::drawRGBBitmap(int16_t x, int16_t y,
-  uint16_t *bitmap, uint8_t *mask, int16_t w, int16_t h) {
-    int16_t bw   = (w + 7) / 8; // Bitmask scanline pad = whole byte
+  uint16_t *bitmap, uint8_t *mask) {
+    int16_t bw   = (bitmap[0] + 7) / 8; // Bitmask scanline pad = whole byte
     uint8_t byte = 0;
     startWrite();
-    for(int16_t j=0; j<h; j++, y++) {
-        for(int16_t i=0; i<w; i++ ) {
+    for(int16_t j=0; j<bitmap[1]; j++, y++) {
+        for(int16_t i=0; i<bitmap[0]; i++ ) {
             if(i & 7) byte <<= 1;
-            else      byte   = mask[j * bw + i / 8];
+            else      byte   = mask[j * bw + i / 8 + 2];
             if(byte & 0x80) {
-                writePixel(x+i, y, bitmap[j * w + i]);
+                writePixel(x+i, y, bitmap[j * bitmap[0] + i + 2]);
             }
         }
     }
@@ -1458,184 +1212,6 @@ void Adafruit_GFX::invertDisplay(boolean i) {
 }
 
 /***************************************************************************/
-
-/**************************************************************************/
-/*!
-   @brief    Create a simple drawn button UI element
-*/
-/**************************************************************************/
-Adafruit_GFX_Button::Adafruit_GFX_Button(void) {
-  _gfx = 0;
-}
-
-/**************************************************************************/
-/*!
-   @brief    Initialize button with our desired color/size/settings
-   @param    gfx     Pointer to our display so we can draw to it!
-   @param    x       The X coordinate of the center of the button
-   @param    y       The Y coordinate of the center of the button
-   @param    w       Width of the buttton
-   @param    h       Height of the buttton
-   @param    outline  Color of the outline (16-bit 5-6-5 standard)
-   @param    fill  Color of the button fill (16-bit 5-6-5 standard)
-   @param    textcolor  Color of the button label (16-bit 5-6-5 standard)
-   @param    label  Ascii string of the text inside the button
-   @param    textsize The font magnification of the label text
-*/
-/**************************************************************************/
-// Classic initButton() function: pass center & size
-void Adafruit_GFX_Button::initButton(
- Adafruit_GFX *gfx, int16_t x, int16_t y, uint16_t w, uint16_t h,
- uint16_t outline, uint16_t fill, uint16_t textcolor,
- char *label, uint8_t textsize)
-{
-  // Tweak arguments and pass to the newer initButtonUL() function...
-  initButtonUL(gfx, x - (w / 2), y - (h / 2), w, h, outline, fill,
-    textcolor, label, textsize);
-}
-
-/**************************************************************************/
-/*!
-   @brief    Initialize button with our desired color/size/settings
-   @param    gfx     Pointer to our display so we can draw to it!
-   @param    x       The X coordinate of the center of the button
-   @param    y       The Y coordinate of the center of the button
-   @param    w       Width of the buttton
-   @param    h       Height of the buttton
-   @param    outline  Color of the outline (16-bit 5-6-5 standard)
-   @param    fill  Color of the button fill (16-bit 5-6-5 standard)
-   @param    textcolor  Color of the button label (16-bit 5-6-5 standard)
-   @param    label  Ascii string of the text inside the button
-   @param    textsize_x The font magnification in X-axis of the label text
-   @param    textsize_y The font magnification in Y-axis of the label text
-*/
-/**************************************************************************/
-// Classic initButton() function: pass center & size
-void Adafruit_GFX_Button::initButton(
- Adafruit_GFX *gfx, int16_t x, int16_t y, uint16_t w, uint16_t h,
- uint16_t outline, uint16_t fill, uint16_t textcolor,
- char *label, uint8_t textsize_x, uint8_t textsize_y)
-{
-  // Tweak arguments and pass to the newer initButtonUL() function...
-  initButtonUL(gfx, x - (w / 2), y - (h / 2), w, h, outline, fill,
-    textcolor, label, textsize_x, textsize_y);
-}
-
-/**************************************************************************/
-/*!
-   @brief    Initialize button with our desired color/size/settings, with upper-left coordinates
-   @param    gfx     Pointer to our display so we can draw to it!
-   @param    x1       The X coordinate of the Upper-Left corner of the button
-   @param    y1       The Y coordinate of the Upper-Left corner of the button
-   @param    w       Width of the buttton
-   @param    h       Height of the buttton
-   @param    outline  Color of the outline (16-bit 5-6-5 standard)
-   @param    fill  Color of the button fill (16-bit 5-6-5 standard)
-   @param    textcolor  Color of the button label (16-bit 5-6-5 standard)
-   @param    label  Ascii string of the text inside the button
-   @param    textsize The font magnification of the label text
-*/
-/**************************************************************************/
-void Adafruit_GFX_Button::initButtonUL(
- Adafruit_GFX *gfx, int16_t x1, int16_t y1, uint16_t w, uint16_t h,
- uint16_t outline, uint16_t fill, uint16_t textcolor,
- char *label, uint8_t textsize)
-{
-  initButtonUL(gfx, x1, y1, w, h, outline, fill, textcolor, label, textsize, textsize);
-}
-
-/**************************************************************************/
-/*!
-   @brief    Initialize button with our desired color/size/settings, with upper-left coordinates
-   @param    gfx     Pointer to our display so we can draw to it!
-   @param    x1       The X coordinate of the Upper-Left corner of the button
-   @param    y1       The Y coordinate of the Upper-Left corner of the button
-   @param    w       Width of the buttton
-   @param    h       Height of the buttton
-   @param    outline  Color of the outline (16-bit 5-6-5 standard)
-   @param    fill  Color of the button fill (16-bit 5-6-5 standard)
-   @param    textcolor  Color of the button label (16-bit 5-6-5 standard)
-   @param    label  Ascii string of the text inside the button
-   @param    textsize_x The font magnification in X-axis of the label text
-   @param    textsize_y The font magnification in Y-axis of the label text
-*/
-/**************************************************************************/
-void Adafruit_GFX_Button::initButtonUL(
- Adafruit_GFX *gfx, int16_t x1, int16_t y1, uint16_t w, uint16_t h,
- uint16_t outline, uint16_t fill, uint16_t textcolor,
- char *label, uint8_t textsize_x, uint8_t textsize_y)
-{
-  _x1           = x1;
-  _y1           = y1;
-  _w            = w;
-  _h            = h;
-  _outlinecolor = outline;
-  _fillcolor    = fill;
-  _textcolor    = textcolor;
-  _textsize_x   = textsize_x;
-  _textsize_y   = textsize_y;
-  _gfx          = gfx;
-  strncpy(_label, label, 9);
-}
-
-/**************************************************************************/
-/*!
-   @brief    Draw the button on the screen
-   @param    inverted Whether to draw with fill/text swapped to indicate 'pressed'
-*/
-/**************************************************************************/
-void Adafruit_GFX_Button::drawButton(boolean inverted) {
-  uint16_t fill, outline, text;
-
-  if(!inverted) {
-    fill    = _fillcolor;
-    outline = _outlinecolor;
-    text    = _textcolor;
-  } else {
-    fill    = _textcolor;
-    outline = _outlinecolor;
-    text    = _fillcolor;
-  }
-
-  uint8_t r = min(_w, _h) / 4; // Corner radius
-  _gfx->fillRoundRect(_x1, _y1, _w, _h, r, fill);
-  _gfx->drawRoundRect(_x1, _y1, _w, _h, r, outline);
-
-  _gfx->setCursor(_x1 + (_w/2) - (strlen(_label) * 3 * _textsize_x),
-    _y1 + (_h/2) - (4 * _textsize_y));
-  _gfx->setTextColor(text);
-  _gfx->setTextSize(_textsize_x, _textsize_y);
-  _gfx->print(_label);
-}
-
-/**************************************************************************/
-/*!
-    @brief    Helper to let us know if a coordinate is within the bounds of the button
-    @param    x       The X coordinate to check
-    @param    y       The Y coordinate to check
-    @returns  True if within button graphics outline
-*/
-/**************************************************************************/
-boolean Adafruit_GFX_Button::contains(int16_t x, int16_t y) {
-  return ((x >= _x1) && (x < (int16_t) (_x1 + _w)) &&
-          (y >= _y1) && (y < (int16_t) (_y1 + _h)));
-}
-
-/**************************************************************************/
-/*!
-   @brief    Query whether the button was pressed since we last checked state
-   @returns  True if was not-pressed before, now is.
-*/
-/**************************************************************************/
-boolean Adafruit_GFX_Button::justPressed() { return (currstate && !laststate); }
-
-/**************************************************************************/
-/*!
-   @brief    Query whether the button was released since we last checked state
-   @returns  True if was pressed before, now is not.
-*/
-/**************************************************************************/
-boolean Adafruit_GFX_Button::justReleased() { return (!currstate && laststate); }
 
 // -------------------------------------------------------------------------
 
