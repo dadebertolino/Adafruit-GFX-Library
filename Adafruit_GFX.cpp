@@ -700,6 +700,29 @@ void Adafruit_GFX::fillTriangle(int16_t x0, int16_t y0,
 }
 
 // RGB BITMAP FUNCTIONS ---------------------
+<<<<<<< HEAD
+
+/**************************************************************************/
+/*!
+@brief   Draw a PROGMEM-resident 16-bit image (RGB 5/6/5) at the specified (x,y) position.
+For 16-bit display devices; no color reduction performed.
+@param    x   Top left corner x coordinate
+@param    y   Top left corner y coordinate
+@param    bitmap  byte array with 16-bit color bitmap
+@param    w   Width of bitmap in pixels
+@param    h   Height of bitmap in pixels
+*/
+/**************************************************************************/
+void Adafruit_GFX::drawRGBBitmap(int16_t x, int16_t y,
+	const uint16_t bitmap[], int16_t w, int16_t h) {
+	startWrite();
+	for (int16_t j = 0; j<h; j++, y++) {
+		for (int16_t i = 0; i<w; i++) {
+			writePixel(x + i, y, pgm_read_word(&bitmap[j * w + i]));
+		}
+	}
+	endWrite();
+=======
 /**************************************************************************/
 /*!
    @brief   Draw a PROGMEM-resident 16-bit image (RGB 5/6/5) at the specified (x,y) position.
@@ -718,10 +741,31 @@ void Adafruit_GFX::drawRGBBitmap(int16_t x, int16_t y,
         }
     }
     endWrite();
+>>>>>>> f8d14be81efcef3b371403cc7cc5cba2e367952e
 }
 
 /**************************************************************************/
 /*!
+<<<<<<< HEAD
+@brief   Draw a RAM-resident 16-bit image (RGB 5/6/5) at the specified (x,y) position.
+For 16-bit display devices; no color reduction performed.
+@param    x   Top left corner x coordinate
+@param    y   Top left corner y coordinate
+@param    bitmap  byte array with 16-bit color bitmap
+@param    w   Width of bitmap in pixels
+@param    h   Height of bitmap in pixels
+*/
+/**************************************************************************/
+void Adafruit_GFX::drawRGBBitmap(int16_t x, int16_t y,
+	uint16_t *bitmap, int16_t w, int16_t h) {
+	startWrite();
+	for (int16_t j = 0; j<h; j++, y++) {
+		for (int16_t i = 0; i<w; i++) {
+			writePixel(x + i, y, bitmap[j * w + i]);
+		}
+	}
+	endWrite();
+=======
    @brief   Draw a RAM-resident 16-bit image (RGB 5/6/5) at the specified (x,y) position.
    For 16-bit display devices; no color reduction performed.
     @param    x   Top left corner x coordinate
@@ -738,11 +782,39 @@ void Adafruit_GFX::drawRGBBitmap(int16_t x, int16_t y,
         }
     }
     endWrite();
+>>>>>>> f8d14be81efcef3b371403cc7cc5cba2e367952e
 }
 
 
 /**************************************************************************/
 /*!
+<<<<<<< HEAD
+@brief   Draw a PROGMEM-resident 16-bit image (RGB 5/6/5) with a 1-bit mask (set bits = opaque, unset bits = clear) at the specified (x,y) position. BOTH buffers (color and mask) must be PROGMEM-resident. For 16-bit display devices; no color reduction performed.
+@param    x   Top left corner x coordinate
+@param    y   Top left corner y coordinate
+@param    bitmap  byte array with 16-bit color bitmap
+@param    mask  byte array with monochrome mask bitmap
+@param    w   Width of bitmap in pixels
+@param    h   Height of bitmap in pixels
+*/
+/**************************************************************************/
+void Adafruit_GFX::drawRGBBitmap(int16_t x, int16_t y,
+	const uint16_t bitmap[], const uint8_t mask[],
+	int16_t w, int16_t h) {
+	int16_t bw = (w + 7) / 8; // Bitmask scanline pad = whole byte
+	uint8_t byte = 0;
+	startWrite();
+	for (int16_t j = 0; j<h; j++, y++) {
+		for (int16_t i = 0; i<w; i++) {
+			if (i & 7) byte <<= 1;
+			else      byte = pgm_read_byte(&mask[j * bw + i / 8]);
+			if (byte & 0x80) {
+				writePixel(x + i, y, pgm_read_word(&bitmap[j * w + i]));
+			}
+		}
+	}
+	endWrite();
+=======
    @brief   Draw a PROGMEM-resident 16-bit image (RGB 5/6/5) with a 1-bit mask (set bits = opaque, unset bits = clear) at the specified (x,y) position. BOTH buffers (color and mask) must be PROGMEM-resident. For 16-bit display devices; no color reduction performed.
     @param    x   Top left corner x coordinate
     @param    y   Top left corner y coordinate
@@ -766,10 +838,37 @@ void Adafruit_GFX::drawRGBBitmap(int16_t x, int16_t y,
         }
     }
     endWrite();
+>>>>>>> f8d14be81efcef3b371403cc7cc5cba2e367952e
 }
 
 /**************************************************************************/
 /*!
+<<<<<<< HEAD
+@brief   Draw a RAM-resident 16-bit image (RGB 5/6/5) with a 1-bit mask (set bits = opaque, unset bits = clear) at the specified (x,y) position. BOTH buffers (color and mask) must be RAM-resident. For 16-bit display devices; no color reduction performed.
+@param    x   Top left corner x coordinate
+@param    y   Top left corner y coordinate
+@param    bitmap  byte array with 16-bit color bitmap
+@param    mask  byte array with monochrome mask bitmap
+@param    w   Width of bitmap in pixels
+@param    h   Height of bitmap in pixels
+*/
+/**************************************************************************/
+void Adafruit_GFX::drawRGBBitmap(int16_t x, int16_t y,
+	uint16_t *bitmap, uint8_t *mask, int16_t w, int16_t h) {
+	int16_t bw = (w + 7) / 8; // Bitmask scanline pad = whole byte
+	uint8_t byte = 0;
+	startWrite();
+	for (int16_t j = 0; j<h; j++, y++) {
+		for (int16_t i = 0; i<w; i++) {
+			if (i & 7) byte <<= 1;
+			else      byte = mask[j * bw + i / 8];
+			if (byte & 0x80) {
+				writePixel(x + i, y, bitmap[j * w + i]);
+			}
+		}
+	}
+	endWrite();
+=======
    @brief   Draw a RAM-resident 16-bit image (RGB 5/6/5) with a 1-bit mask (set bits = opaque, unset bits = clear) at the specified (x,y) position. BOTH buffers (color and mask) must be RAM-resident. For 16-bit display devices; no color reduction performed.
     @param    x   Top left corner x coordinate
     @param    y   Top left corner y coordinate
@@ -792,6 +891,7 @@ void Adafruit_GFX::drawRGBBitmap(int16_t x, int16_t y,
         }
     }
     endWrite();
+>>>>>>> f8d14be81efcef3b371403cc7cc5cba2e367952e
 }
 
 // TEXT- AND CHARACTER-HANDLING FUNCTIONS ----------------------------------
