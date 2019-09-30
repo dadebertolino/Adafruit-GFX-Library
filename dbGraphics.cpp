@@ -40,6 +40,7 @@ void dbSimpleButton::initButton(
 	_fillcolor = fill;
 	_textcolor = textcolor;
 	_gfx = gfx;
+	_visible = true;
 	strncpy(_label, const_cast<char*>(label.c_str()), 29);
 }
 
@@ -73,7 +74,10 @@ void dbSimpleButton::DrawButtonLabel(void)
 /**************************************************************************/
 void dbSimpleButton::drawButton(boolean inverted) {
 	uint16_t fill, outline, text;
-
+	if (!_visible)
+	{
+		return;
+	}
 	if (!inverted) {
 		fill = _fillcolor;
 		outline = _outlinecolor;
@@ -84,11 +88,9 @@ void dbSimpleButton::drawButton(boolean inverted) {
 		outline = _outlinecolor;
 		text = _fillcolor;
 	}
-
 	uint8_t r = min(_w, _h) / 4; // Corner radius
 	_gfx->fillRoundRect(_x1, _y1, _w, _h, r, fill);
 	_gfx->drawRoundRect(_x1, _y1, _w, _h, r, outline, BUTTON_THICK);
-
 	DrawButtonLabel();
 }
 
@@ -101,6 +103,10 @@ void dbSimpleButton::drawButton(boolean inverted) {
 */
 /**************************************************************************/
 boolean dbSimpleButton::contains(int16_t x, int16_t y) {
+	if (!_visible)
+	{
+		return false;
+	}
 	return ((x >= _x1) && (x < (int16_t)(_x1 + _w)) &&
 		(y >= _y1) && (y < (int16_t)(_y1 + _h)));
 }
@@ -168,6 +174,20 @@ boolean dbSimpleButton::justPressed() { return (currstate && !laststate); }
 /**************************************************************************/
 boolean dbSimpleButton::justReleased() { return (!currstate && laststate); }
 
+/**************************************************************************/
+/*!
+   @brief    Query whether the button was released since we last checked state
+   @returns  True if was pressed before, now is not.
+*/
+/**************************************************************************/
+boolean dbSimpleButton::GetVisible(void)
+{
+	return _visible;
+}
+void dbSimpleButton::SetVisible(boolean visible)
+{
+	_visible = visible;
+}
 
 /***************************************************************************/
 
@@ -196,7 +216,6 @@ dbImageButton::dbImageButton(void) {
 */
 /**************************************************************************/
 void dbImageButton::initButton( 
-<<<<<<< HEAD
 	Adafruit_GFX *gfx, int16_t x, int16_t y,
 	uint16_t *bitmap, int16_t w, int16_t h)
 {
@@ -206,14 +225,6 @@ void dbImageButton::initButton(
 	_h = h;
 	_gfx = gfx;
 	img = bitmap;
-=======
-	Adafruit_GFX *gfx, int16_t x1, int16_t y1, const uint16_t bitmap[])
-{
-	_x1 = x1;
-	_y1 = y1;
-	_gfx = gfx;
-	//img = bitmap;
->>>>>>> f8d14be81efcef3b371403cc7cc5cba2e367952e
 }
 
 /**************************************************************************/
@@ -222,29 +233,9 @@ void dbImageButton::initButton(
 @param    inverted Whether to draw with fill/text swapped to indicate 'pressed'
 */
 /**************************************************************************/
-<<<<<<< HEAD
 void dbImageButton::drawButton(boolean inverted) 
 {
 	_gfx->drawRGBBitmap(_x1, _y1, img, _w, _h);
-=======
-void dbImageButton::drawButton(boolean inverted) {
-	uint16_t fill, outline, text;
-
-	if (!inverted) {
-		fill = _fillcolor;
-		outline = _outlinecolor;
-		text = _textcolor;
-	}
-	else {
-		fill = _textcolor;
-		outline = _outlinecolor;
-		text = _fillcolor;
-	}
-
-	uint8_t r = min(_w, _h) / 4; // Corner radius
-	_gfx->fillRoundRect(_x1, _y1, _w, _h, r, fill);
-	_gfx->drawRoundRect(_x1, _y1, _w, _h, r, outline, BUTTON_THICK);
->>>>>>> f8d14be81efcef3b371403cc7cc5cba2e367952e
 }
 
 /**************************************************************************/
@@ -256,13 +247,8 @@ void dbImageButton::drawButton(boolean inverted) {
 */
 /**************************************************************************/
 boolean dbImageButton::contains(int16_t x, int16_t y) {
-<<<<<<< HEAD
 	return ((x >= _x1) && (x < (_x1 + _w)) &&
 		(y >= _y1) && (y < (_y1 + _h)));
-=======
-	return ((x >= _x1) && (x < (int16_t)(_x1 + _w)) &&
-		(y >= _y1) && (y < (int16_t)(_y1 + _h)));
->>>>>>> f8d14be81efcef3b371403cc7cc5cba2e367952e
 }
 
 /**************************************************************************/

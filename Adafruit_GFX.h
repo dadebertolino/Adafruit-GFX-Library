@@ -67,7 +67,6 @@ class Adafruit_GFX : public Print {
 		  int16_t radius, uint16_t color, uint8_t thickness),
     fillRoundRect(int16_t x0, int16_t y0, int16_t w, int16_t h,
       int16_t radius, uint16_t color),
-<<<<<<< HEAD
 	drawRGBBitmap(int16_t x, int16_t y, const uint16_t bitmap[],
 		  int16_t w, int16_t h),
 	drawRGBBitmap(int16_t x, int16_t y, uint16_t *bitmap,
@@ -77,14 +76,6 @@ class Adafruit_GFX : public Print {
 		  int16_t w, int16_t h),
 	drawRGBBitmap(int16_t x, int16_t y,
 		  uint16_t *bitmap, uint8_t *mask, int16_t w, int16_t h),
-=======
-    drawRGBBitmap(int16_t x, int16_t y, const uint16_t bitmap[]),
-    drawRGBBitmap(int16_t x, int16_t y, uint16_t *bitmap),
-    drawRGBBitmap(int16_t x, int16_t y,
-      const uint16_t bitmap[], const uint8_t mask[]),
-    drawRGBBitmap(int16_t x, int16_t y,
-      uint16_t *bitmap, uint8_t *mask),
->>>>>>> f8d14be81efcef3b371403cc7cc5cba2e367952e
     drawChar(int16_t x, int16_t y, unsigned char c, uint16_t color,
       uint16_t bg, uint8_t size),
     drawChar(int16_t x, int16_t y, unsigned char c, uint16_t color,
