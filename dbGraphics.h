@@ -11,10 +11,18 @@
 #include "Adafruit_GFX.h"
 
 
+class dbWidget {
+public:
+		virtual void Draw(void);
+		//virtual boolean contains(int16_t x, int16_t y);
+
+};
+
 /// A simple drawn button UI element
-class dbSimpleButton {
+class dbSimpleButton:dbWidget {
 
 public:
+	virtual void Draw(void) { drawButton(false); };
 	dbSimpleButton(void);
 	void initButton(Adafruit_GFX *gfx, int16_t x1, int16_t y1,
 		uint16_t w, uint16_t h, uint16_t outline, uint16_t fill,

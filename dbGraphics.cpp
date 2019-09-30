@@ -3,7 +3,15 @@
 
 #define BUTTON_THICK	3
 /***************************************************************************/
-
+/*
+virtual void dbWidget::Draw(void)
+{
+}
+virtual boolean dbWidget::contains(int16_t x, int16_t y)
+{
+	return false;
+}
+*/
 /**************************************************************************/
 /*!
    @brief    Create a simple drawn button UI element
