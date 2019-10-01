@@ -515,6 +515,26 @@ void Adafruit_GFX::drawRect(int16_t x, int16_t y, int16_t w, int16_t h,
 
 /**************************************************************************/
 /*!
+   @brief   Draw a rectangle with no fill color
+    @param    x   Top left corner x coordinate
+    @param    y   Top left corner y coordinate
+    @param    w   Width in pixels
+    @param    h   Height in pixels
+    @param    color 16-bit 5-6-5 Color to draw with
+	@param    thickness Border thickness
+*/
+/**************************************************************************/
+void Adafruit_GFX::drawRect(int16_t x, int16_t y, int16_t w, int16_t h,
+        uint16_t color, uint8_t thickness) {
+	uint8_t cnt;
+	for (cnt = 0; cnt < thickness; cnt++)
+	{
+		drawRect(x + cnt, y + cnt, w - (cnt * 2), h - (cnt * 2), color);
+	}		
+}
+
+/**************************************************************************/
+/*!
    @brief   Draw a rounded rectangle with no fill color
     @param    x   Top left corner x coordinate
     @param    y   Top left corner y coordinate

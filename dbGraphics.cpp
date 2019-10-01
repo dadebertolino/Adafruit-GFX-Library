@@ -19,6 +19,8 @@ virtual boolean dbWidget::contains(int16_t x, int16_t y)
 /**************************************************************************/
 dbSimpleButton::dbSimpleButton(void) {
 	_gfx = 0;
+	_rounded = true;
+	_buttonThick = BUTTON_THICK;
 }
 
 /**************************************************************************/
@@ -96,9 +98,17 @@ void dbSimpleButton::drawButton(boolean inverted) {
 		outline = _outlinecolor;
 		text = _fillcolor;
 	}
-	uint8_t r = min(_w, _h) / 4; // Corner radius
-	_gfx->fillRoundRect(_x1, _y1, _w, _h, r, fill);
-	_gfx->drawRoundRect(_x1, _y1, _w, _h, r, outline, BUTTON_THICK);
+	
+	if (_rounded == true)
+	{
+		uint8_t r = min(_w, _h) / 4; // Corner radius
+		_gfx->fillRoundRect(_x1, _y1, _w, _h, r, fill);
+		_gfx->drawRoundRect(_x1, _y1, _w, _h, r, outline, _buttonThick);
+	}else
+	{
+		_gfx->fillRect(_x1, _y1, _w, _h, fill);
+		_gfx->drawRect(_x1, _y1, _w, _h, outline, _buttonThick);
+	}
 	DrawButtonLabel();
 }
 
@@ -297,3 +307,48 @@ boolean dbImageButton::justPressed() { return (currstate && !laststate); }
 */
 /**************************************************************************/
 boolean dbImageButton::justReleased() { return (!currstate && laststate); }
+
+dbLabel::dbLabel(void) 
+{
+	_gfx = 0;
+}
+
+void dbLabel::Draw(void) 
+{
+}
+
+boolean dbLabel::contains(int16_t x, int16_t y)
+{
+	return false;
+}
+
+/**************************************************************************/
+/*!
+   @brief    Initialize Label with our desired color/size/settings, with upper-left coordinates
+   @param    gfx     Pointer to our display so we can draw to it!
+   @param    x1       The X coordinate of the Upper-Left corner of the button
+   @param    y1       The Y coordinate of the Upper-Left corner of the button
+   @param    w       Width of the buttton
+   @param    h       Height of the buttton
+   @param    outline  Color of the outline (16-bit 5-6-5 standard)
+   @param    fill  Color of the button fill (16-bit 5-6-5 standard)
+   @param    textcolor  Color of the button label (16-bit 5-6-5 standard)
+   @param    label  Ascii string of the text inside the button
+*/
+/**************************************************************************/
+void dbLabel::initLabel(
+	Adafruit_GFX *gfx, int16_t x1, int16_t y1, uint16_t w, uint16_t h,
+	uint16_t outline, uint16_t fill, uint16_t textcolor,
+	const String & label)
+{
+	_x1 = x1;
+	_y1 = y1;
+	_w = w;
+	_h = h;
+	_outlinecolor = outline;
+	_fillcolor = fill;
+	_textcolor = textcolor;
+	_gfx = gfx;
+	_visible = true;
+	strncpy(_label, const_cast<char*>(label.c_str()), 29);
+}
